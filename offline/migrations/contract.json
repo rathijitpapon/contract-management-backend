@@ -1,0 +1,21 @@
+{
+    "Table": {
+        "TableName": "contract-table",
+        "KeySchema": [
+            {
+                "AttributeName": "contractId",
+                "KeyType": "HASH"
+            }
+        ],
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "contractId",
+                "AttributeType": "S"
+            }
+        ],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 1,
+            "WriteCapacityUnits": 1
+        }
+    }
+}

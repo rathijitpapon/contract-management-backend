@@ -1,0 +1,184 @@
+service: contract-management-backend
+app: contract-management-backend
+frameworkVersion: '3'
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
+  - serverless-dynamodb-local
+
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+      noStart: true
+    migration:
+      dir: offline/migrations
+
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: '20201221'
+  environment:
+    IS_OFFLINE: true
+    USER_TABLE: 'user-table'
+    TEMPLATE_TABLE: 'template-table'
+    CONTRACT_TABLE: 'contract-table'
+  httpApi:
+    cors: true
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+          Resource: "arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.USER_TABLE}"
+
+
+functions:
+  registerUser:
+    handler: src/apis/user/registerUser/controller.registerUser
+    events:
+      - http:
+          path: /users/register
+          method: post
+
+  loginUser:
+    handler: src/apis/user/loginUser/controller.loginUser
+    events:
+      - http:
+          path: /users/login
+          method: post
+
+  getUserById:
+    handler: src/apis/user/getUserById/controller.getUserById
+    events:
+      - http:
+          path: /users
+          method: get
+
+  updateUser:
+    handler: src/apis/user/updateUser/controller.updateUser
+    events:
+      - http:
+          path: /users
+          method: put
+
+  getUsers:
+    handler: src/apis/user/getUsers/controller.getUsers
+    events:
+      - http:
+          path: /users/all
+          method: get
+
+  createTemplate:
+    handler: src/apis/template/createTemplate/controller.createTemplate
+    events:
+      - http:
+          path: /templates
+          method: post
+
+  getTemplateById:
+    handler: src/apis/template/getTemplateById/controller.getTemplateById
+    events:
+      - http:
+          path: /templates
+          method: get
+
+  updateTemplate:
+    handler: src/apis/template/updateTemplate/controller.updateTemplate
+    events:
+      - http:
+          path: /templates
+          method: put
+
+  getTemplates:
+    handler: src/apis/template/getTemplates/controller.getTemplates
+    events:
+      - http:
+          path: /templates/all
+          method: get
+
+  createContract:
+    handler: src/apis/contract/createContract/controller.createContract
+    events:
+      - http:
+          path: /contracts
+          method: post
+
+  getContractById:
+    handler: src/apis/contract/getContractById/controller.getContractById
+    events:
+      - http:
+          path: /contracts
+          method: get
+
+  updateContract:
+    handler: src/apis/contract/updateContract/controller.updateContract
+    events:
+      - http:
+          path: /contracts
+          method: put
+
+  getContracts:
+    handler: src/apis/contract/getContracts/controller.getContracts
+    events:
+      - http:
+          path: /contracts/all
+          method: get
+
+
+resources:
+  Resources:
+    UserTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - 
+            AttributeName: userId
+            AttributeType: S
+        KeySchema:
+          - 
+            AttributeName: userId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.USER_TABLE}
+    TemplateTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - 
+            AttributeName: templateId
+            AttributeType: S
+        KeySchema:
+          - 
+            AttributeName: templateId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.TEMPLATE_TABLE}
+    ContractTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        AttributeDefinitions:
+          - 
+            AttributeName: contractId
+            AttributeType: S
+        KeySchema:
+          - 
+            AttributeName: contractId
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.CONTRACT_TABLE}

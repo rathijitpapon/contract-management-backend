@@ -1,0 +1,9 @@
+.serverless
+node_modules
+.build
+.vscode
+*.env
+*docker/
+package-lock.json
+yarn.lock
+.DS_Store

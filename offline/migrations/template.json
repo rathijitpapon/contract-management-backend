@@ -1,0 +1,21 @@
+{
+    "Table": {
+        "TableName": "template-table",
+        "KeySchema": [
+            {
+                "AttributeName": "templateId",
+                "KeyType": "HASH"
+            }
+        ],
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "templateId",
+                "AttributeType": "S"
+            }
+        ],
+        "ProvisionedThroughput": {
+            "ReadCapacityUnits": 1,
+            "WriteCapacityUnits": 1
+        }
+    }
+}
