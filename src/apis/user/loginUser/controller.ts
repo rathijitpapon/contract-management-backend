@@ -1,7 +1,10 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+const jwt = require('jsonwebtoken');
 import User from '../user.model';
 import UserTable from '../user.table';
 import validateLoginUser from './validation';
+
+const jwtSecret = process.env.JWT_SECRET || 'defaultsecret';
 
 export const loginUser = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   if (!event.body) {
@@ -50,8 +53,13 @@ export const loginUser = async (event: APIGatewayProxyEvent): Promise<APIGateway
   }
 
   delete user.password;
+
+  const authToken = jwt.sign({ id: user.userId }, jwtSecret, { expiresIn: '1h' });
   return {
     statusCode: 200,
-    body: JSON.stringify(user),
+    body: JSON.stringify({
+      user,
+      authToken,
+    }),
   };
 };

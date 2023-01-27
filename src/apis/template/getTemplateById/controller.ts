@@ -1,9 +1,21 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import isAuthenticated from "../../../middlewares/authVerify";
 import Template from '../template.model';
 import TemplateTable from '../template.table';
 import validateGetTemplateById from './validation';
 
 export const getTemplateById = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  const authData = await isAuthenticated(event);
+  if (authData.isError || !authData.user) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({
+        message: 'Unauthorized',
+        errors: authData.errors,
+      }),
+    };
+  }
+  
   if (!event.queryStringParameters || !event.queryStringParameters.templateId) {
     return {
       statusCode: 400,

@@ -1,17 +1,23 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import bcrypt from 'bcryptjs';
+import isAuthenticated from "../../../middlewares/authVerify";
 import User from '../user.model';
 import UserTable from '../user.table';
 import validateUpdateUser from './validation';
 
 export const updateUser = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  if (!event.queryStringParameters || !event.queryStringParameters.userId) {
+  const authData = await isAuthenticated(event);
+  if (authData.isError || !authData.user) {
     return {
-      statusCode: 400,
-      headers: { 'Content-Type': 'text/plain' },
-      body: 'User id not provided.',
+      statusCode: 401,
+      body: JSON.stringify({
+        message: 'Unauthorized',
+        errors: authData.errors,
+      }),
     };
   }
+  const authenticatedUser = authData.user;
+  
   if (!event.body) {
     return {
       statusCode: 400,
@@ -23,7 +29,7 @@ export const updateUser = async (event: APIGatewayProxyEvent): Promise<APIGatewa
   const data = JSON.parse(event.body);
 
   const validationResult = validateUpdateUser({
-    userId: event.queryStringParameters.userId,
+    userId: authenticatedUser.userId,
     ...data,
   });
 

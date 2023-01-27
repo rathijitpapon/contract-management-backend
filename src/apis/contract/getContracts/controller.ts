@@ -1,8 +1,20 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import isAuthenticated from "../../../middlewares/authVerify";
 import Contract from '../contract.model';
 import ContractTable from '../contract.table';
 
 export const getContracts = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  const authData = await isAuthenticated(event);
+  if (authData.isError || !authData.user) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({
+        message: 'Unauthorized',
+        errors: authData.errors,
+      }),
+    };
+  }
+  
   const contractTable = new ContractTable();
 
   let contracts: Contract[];

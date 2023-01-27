@@ -1,8 +1,20 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import isAuthenticated from "../../../middlewares/authVerify";
 import User from '../user.model';
 import UserTable from '../user.table';
 
 export const getUsers = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  const authData = await isAuthenticated(event);
+  if (authData.isError || !authData.user) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({
+        message: 'Unauthorized',
+        errors: authData.errors,
+      }),
+    };
+  }
+  
   const userTable = new UserTable();
 
   let users: User[];

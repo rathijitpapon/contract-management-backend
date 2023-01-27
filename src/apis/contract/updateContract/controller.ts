@@ -4,8 +4,22 @@ import ContractTable from '../contract.table';
 import TemplateTable from '../../template/template.table';
 import UserTable from "../../user/user.table";
 import validateUpdateContract from './validation';
+import isAuthenticated from "../../../middlewares/authVerify";
 
 export const updateContract = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  const authData = await isAuthenticated(event);
+  if (authData.isError || !authData.user) {
+    return {
+      statusCode: 401,
+      body: JSON.stringify({
+        message: 'Unauthorized',
+        errors: authData.errors,
+      }),
+    };
+  }
+
+  const authenticatedUser = authData.user;
+  
   if (!event.queryStringParameters || !event.queryStringParameters.contractId) {
     return {
       statusCode: 400,
@@ -26,6 +40,7 @@ export const updateContract = async (event: APIGatewayProxyEvent): Promise<APIGa
   const validationResult = validateUpdateContract({
     contractId: event.queryStringParameters.contractId,
     ...data,
+    userId: authenticatedUser.userId,
   });
 
   if (validationResult.error || !validationResult.contractData) {
@@ -65,7 +80,7 @@ export const updateContract = async (event: APIGatewayProxyEvent): Promise<APIGa
     }
 
     const contract = await contractTable.getContractById(contractId);
-    if (!contract) {
+    if (!contract || contract.userId !== userId) {
       return {
         statusCode: 404,
         body: JSON.stringify({

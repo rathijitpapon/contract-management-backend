@@ -28,6 +28,7 @@ provider:
     USER_TABLE: 'user-table'
     TEMPLATE_TABLE: 'template-table'
     CONTRACT_TABLE: 'contract-table'
+    JWT_SECRET: 'secret'
   httpApi:
     cors: true
   iam:
@@ -45,6 +46,9 @@ provider:
 
 
 functions:
+  verify-token:
+    handler: src/middlewares/auth.verifyToken
+
   registerUser:
     handler: src/apis/user/registerUser/controller.registerUser
     events:
@@ -65,6 +69,10 @@ functions:
       - http:
           path: /users
           method: get
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   updateUser:
     handler: src/apis/user/updateUser/controller.updateUser
@@ -72,6 +80,10 @@ functions:
       - http:
           path: /users
           method: put
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   getUsers:
     handler: src/apis/user/getUsers/controller.getUsers
@@ -79,6 +91,10 @@ functions:
       - http:
           path: /users/all
           method: get
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   createTemplate:
     handler: src/apis/template/createTemplate/controller.createTemplate
@@ -86,6 +102,10 @@ functions:
       - http:
           path: /templates
           method: post
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   getTemplateById:
     handler: src/apis/template/getTemplateById/controller.getTemplateById
@@ -93,6 +113,10 @@ functions:
       - http:
           path: /templates
           method: get
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   updateTemplate:
     handler: src/apis/template/updateTemplate/controller.updateTemplate
@@ -100,6 +124,10 @@ functions:
       - http:
           path: /templates
           method: put
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   getTemplates:
     handler: src/apis/template/getTemplates/controller.getTemplates
@@ -107,6 +135,10 @@ functions:
       - http:
           path: /templates/all
           method: get
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   createContract:
     handler: src/apis/contract/createContract/controller.createContract
@@ -114,6 +146,10 @@ functions:
       - http:
           path: /contracts
           method: post
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   getContractById:
     handler: src/apis/contract/getContractById/controller.getContractById
@@ -121,6 +157,10 @@ functions:
       - http:
           path: /contracts
           method: get
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   updateContract:
     handler: src/apis/contract/updateContract/controller.updateContract
@@ -128,6 +168,10 @@ functions:
       - http:
           path: /contracts
           method: put
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
   getContracts:
     handler: src/apis/contract/getContracts/controller.getContracts
@@ -135,6 +179,10 @@ functions:
       - http:
           path: /contracts/all
           method: get
+          authorizer:
+            name: verify-token
+            identitySource: method.request.header.Authorization
+            resultTtlInSeconds: 3600
 
 
 resources:

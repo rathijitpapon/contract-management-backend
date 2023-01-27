@@ -11,6 +11,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.102",
     "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^9.0.1",
     "@types/node": "^18.7.13",
     "@types/uuid": "^9.0.0",
     "prettier": "^2.7.1",
@@ -24,6 +25,7 @@
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1302.0",
     "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
     "uuid": "^9.0.0"
   }
 }
