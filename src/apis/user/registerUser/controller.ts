@@ -1,4 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import bcrypt from 'bcryptjs';
 import User from '../user.model';
 import UserTable from '../user.table';
 import validateRegisterUser from './validation';
@@ -30,6 +31,23 @@ export const registerUser = async (event: APIGatewayProxyEvent): Promise<APIGate
 
   let newUser: User;
   try {
+    const user = await userTable.getUserByEmail(validationResult.user.email);
+    if (user) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message: 'Could not create the user.',
+          errors: {
+            email: 'Email already exists.',
+          },
+        }),
+      };
+    }
+
+    if (validationResult.user.password) {
+      validationResult.user.password = await bcrypt.hash(validationResult.user.password, 10);
+    }
+
     newUser = await userTable.createUser(validationResult.user);
   } catch (err: any) {
     return {
@@ -47,6 +65,7 @@ export const registerUser = async (event: APIGatewayProxyEvent): Promise<APIGate
     };
   }
 
+  delete newUser.password;
   return {
     statusCode: 201,
     body: JSON.stringify(newUser),

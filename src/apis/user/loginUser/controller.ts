@@ -49,6 +49,7 @@ export const loginUser = async (event: APIGatewayProxyEvent): Promise<APIGateway
     };
   }
 
+  delete user.password;
   return {
     statusCode: 200,
     body: JSON.stringify(user),

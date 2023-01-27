@@ -49,6 +49,7 @@ export const getUserById = async (event: APIGatewayProxyEvent): Promise<APIGatew
     };
   }
 
+  delete user.password;
   return {
     statusCode: 200,
     body: JSON.stringify(user),

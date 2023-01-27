@@ -1,4 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import bcrypt from 'bcryptjs';
 import User from '../user.model';
 import UserTable from '../user.table';
 import validateUpdateUser from './validation';
@@ -53,11 +54,30 @@ export const updateUser = async (event: APIGatewayProxyEvent): Promise<APIGatewa
       };
     }
 
+    if (email && email !== user.email) {
+      const userByEmail = await userTable.getUserByEmail(email);
+      if (userByEmail) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            message: 'Could not update the user.',
+            errors: {
+              email: 'Email already exists.',
+            },
+          }),
+        };
+      }
+    }
+
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
+
     updatedUser = new User(
       userId,
       name || user.name,
       email || user.email,
-      password || user.password,
+      user.password || '',
       user.createdAt,
       new Date().toISOString(),
     );
@@ -80,6 +100,7 @@ export const updateUser = async (event: APIGatewayProxyEvent): Promise<APIGatewa
     };
   }
 
+  delete updatedUser.password;
   return {
     statusCode: 200,
     body: JSON.stringify(updatedUser),

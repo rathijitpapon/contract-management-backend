@@ -20,6 +20,10 @@ export const getUsers = async (event: APIGatewayProxyEvent): Promise<APIGatewayP
     users = [];
   }
 
+  users.forEach((_user, index) => {
+    delete users[index].password;
+  });
+
   return {
     statusCode: 200,
     body: JSON.stringify(users),
