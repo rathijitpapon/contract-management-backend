@@ -23,7 +23,6 @@ custom:
 provider:
   name: aws
   runtime: nodejs12.x
-  lambdaHashingVersion: '20201221'
   environment:
     IS_OFFLINE: true
     USER_TABLE: 'user-table'
