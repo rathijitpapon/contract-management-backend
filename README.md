@@ -1,1 +1,233 @@
 # Contract Manage Backend
+
+## Description
+This is a sample project for contract management system. Users can create, update and get contract templates. Also they can create, update and get contracts using these templates. User authentication is done using JWT.
+
+## Technologies
+- Node.js
+- Serverless Framework
+- Typescript
+- DynamoDB
+- REST API
+- Jest
+
+## How to run
+- Install Node.js
+  - https://nodejs.org/en/download/
+- Install Docker Desktop
+  - https://docs.docker.com/get-docker/
+- Install AWS CLI
+  - https://docs.aws.amazon.com/cli/v1/userguide/cli-chap-install.html
+- Install Configure AWS CLI
+  - `aws configure`
+  - Setup AWS credentials
+- Install serverless framework
+  - `npm install -g serverless`
+- Open terminal and go to project root
+- Provide AWS credentials in the src/database/index.ts file
+- Install dependencies
+  - `npm install`
+- Install DynamoDB locally
+  - `sls dynamodb install`
+  - `cd dynamodb && docker-compose up -d`
+- Go to project root and run the following commands
+  - `sls offline start`
+- After successfully running the project in the `localhost:3000`, run unit tests
+  - `npm run test`
+
+
+## API Endpoints
+- API Gateway
+  - http://localhost:3000/dev
+- Users
+  - POST /users/register
+  - POST /users/login
+  - GET /users?userId={userId}
+  - GET /users/all
+  - PUT /users?userId={userId}
+- POST /users/register
+  - Register a new user
+  - Request body
+    - email: string
+    - password: string
+    - name: string
+  - Response body
+    - user
+      - userId: string
+      - email: string
+      - name: string
+      - createdAt: string
+      - updatedAt: string
+    - authToken (JWT) : string
+- POST /users/login
+  - Login a user
+  - Request body
+    - email: string
+    - password: string
+  - Response body
+    - user
+      - userId: string
+      - email: string
+      - name: string
+      - createdAt: string
+      - updatedAt: string
+    - authToken (JWT) : string
+- GET /users?userId={userId}
+  - Get a user by userId
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - None
+  - Response body
+    - userId: string
+    - email: string
+    - name: string
+    - createdAt: string
+    - updatedAt: string
+- GET /users/all
+  - Get all users
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - None
+  - Response body
+    - users (array)
+      - userId: string
+      - email: string
+      - name: string
+      - createdAt: string
+      - updatedAt: string
+- PUT /users?userId={userId}
+  - Update a user by userId
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - email: string
+    - name: string
+    - password: string
+  - Response body
+    - userId: string
+    - email: string
+    - name: string
+    - createdAt: string
+    - updatedAt: string
+
+
+- Templates
+  - POST /templates
+  - GET /templates?templateId={templateId}
+  - GET /templates/all
+  - PUT /templates?templateId={templateId}
+- POST /templates
+  - Create a new template
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - content: string
+  - Response body
+    - templateId: string
+    - content: string
+    - createdAt: string
+    - updatedAt: string
+- GET /templates?templateId={templateId}
+  - Get a template by templateId
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - None
+  - Response body
+    - templateId: string
+    - content: string
+    - createdAt: string
+    - updatedAt: string
+- GET /templates/all
+  - Get all templates
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - None
+  - Response body
+    - templates (array)
+      - templateId: string
+      - content: string
+      - createdAt: string
+      - updatedAt: string
+- PUT /templates?templateId={templateId}
+  - Update a template by templateId
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - content: string
+  - Response body
+    - templateId: string
+    - content: string
+    - createdAt: string
+    - updatedAt: string
+  
+
+- Contracts
+  - POST /contracts
+  - GET /contracts?contractId={contractId}
+  - GET /contracts/all
+  - PUT /contracts?contractId={contractId}
+- POST /contracts
+  - Create a new contract
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - templateId: string
+    - contractName: string
+    - description: string
+  - Response body
+    - contractId: string
+    - templateId: string
+    - userId: string
+    - contractName: string
+    - description: string
+    - createdAt: string
+    - updatedAt: string
+- GET /contracts?contractId={contractId}
+  - Get a contract by contractId
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - None
+  - Response body
+    - contractId: string
+    - templateId: string
+    - userId: string
+    - contractName: string
+    - description: string
+    - createdAt: string
+    - updatedAt: string
+- GET /contracts/all
+  - Get all contracts
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - None
+  - Response body
+    - contracts (array)
+      - contractId: string
+      - templateId: string
+      - userId: string
+      - contractName: string
+      - description: string
+      - createdAt: string
+      - updatedAt: string
+- PUT /contracts?contractId={contractId}
+  - Update a contract by contractId
+  - Headers
+    - Authorization: 'Bearer {authToken}'
+  - Request body
+    - templateId: string
+    - contractName: string
+    - description: string
+  - Response body
+    - contractId: string
+    - templateId: string
+    - userId: string
+    - contractName: string
+    - description: string
+    - createdAt: string
+    - updatedAt: string
