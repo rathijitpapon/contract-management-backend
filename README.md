@@ -23,6 +23,8 @@ This is a sample project for contract management system. Users can create, updat
   - Setup AWS credentials
 - Install serverless framework
   - `npm install -g serverless`
+- Clone the project from GitHub
+  - `git clone https://github.com/rathijitpapon/contract-management-backend.git`
 - Open terminal and go to project root
 - Provide AWS credentials in the src/database/index.ts file
 - Install dependencies
